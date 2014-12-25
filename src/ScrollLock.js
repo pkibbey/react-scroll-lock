@@ -39,6 +39,14 @@ var removeTouchMoveEventListener = function(elem, handler) {
     elem.removeEventListener('touchmove', handler, false);
 };
 
+var addTouchEndEventListener = function(elem, handler) {
+    elem.addEventListener('touchend', handler, false);
+};
+
+var removeTouchEndEventListener = function(elem, handler) {
+    elem.removeEventListener('touchend', handler, false);
+};
+
 
 var previousTouchEvent = null;
 
@@ -50,6 +58,10 @@ var deltaTouch = function(touchEvent, st) {
     }
     previousTouchEvent = touchEvent;
     return 0;
+};
+
+var clearPreviousTouchEvent = function() {
+    previousTouchEvent = null;
 };
 
 
@@ -92,16 +104,18 @@ var ScrollLock = {
     touchLock: function () {
         var elem = this.getDOMNode();
         if (elem) {
-            addTouchMoveEventListener(elem, this.onTouchHandler);
+            addTouchMoveEventListener(elem, this.onTouchMoveHandler);
             addTouchStartEventListener(elem, this.onTouchStartHandler);
+            addTouchEndEventListener(elem, this.onTouchEndHandler);
         }
     },
 
     touchRelease: function () {
         var elem = this.getDOMNode();
         if (elem) {
-            removeTouchMoveEventListener(elem, this.onTouchHandler);
+            removeTouchMoveEventListener(elem, this.onTouchMoveHandler);
             removeTouchStartEventListener(elem, this.onTouchStartHandler);
+            removeTouchEndEventListener(elem, this.onTouchEndHandler);
         }
     },
 
@@ -127,7 +141,11 @@ var ScrollLock = {
         deltaTouch(e, this.getDOMNode().scrollTop);
     },
 
-    onTouchHandler: function(e) {
+    onTouchEndHandler: function(e) {
+        clearPreviousTouchEvent();
+    },
+
+    onTouchMoveHandler: function(e) {
         var elem = this.getDOMNode();
         var scrollTop = elem.scrollTop;
         var scrollHeight = elem.scrollHeight;
