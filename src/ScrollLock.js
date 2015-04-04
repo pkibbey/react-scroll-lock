@@ -154,10 +154,16 @@ var ScrollLock = {
         var isDeltaPositive = wheelDelta > 0;
 
         if (isDeltaPositive && wheelDelta >= scrollHeight - height - scrollTop) {
+            if (this.props.callback) {
+                this.props.callback('bottom');
+            }
             elem.scrollTop = scrollTop;
             return cancelScrollEvent(e);
         }
         else if (!isDeltaPositive && -wheelDelta >= scrollTop) {
+            if (this.props.callback) {
+                this.props.callback('bottom');
+            }
             elem.scrollTop = 0;
             return cancelScrollEvent(e);
         }
